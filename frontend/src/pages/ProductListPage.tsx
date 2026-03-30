@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react'
 import ProductList from '../components/ProductList'
 import { API_BASE_URL } from '../config'
+import { Product } from '../types/Product'
 
-interface Product {
-  id: number
-  title: string
-  description: string
-  price: number
-  category: string
-  sellerName: string
-  postedDate: string
-  imageUrl: string
-}
 
 function ProductListPage() {
   const [products, setProducts] = useState<Product[]>([])
