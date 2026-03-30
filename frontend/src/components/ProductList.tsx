@@ -1,10 +1,14 @@
+import { Product } from '../types/Product'
 import ProductCard from './ProductCard'
 
-function ProductList({ products }) {
+interface ProductListProps {
+  products: Product[]
+}
+
+function ProductList({ products }: ProductListProps) {
   if (products.length === 0) {
     return <p>No products available right now. Check back soon!</p>
   }
-
   return (
     <div style={{
       display: 'grid',

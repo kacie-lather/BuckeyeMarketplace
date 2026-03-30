@@ -1,8 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+import { Product } from '../types/Product'
 
-function ProductCard({ product }) {
+interface ProductCardProps {
+  product: Product
+}
+
+function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate()
-
   return (
     <div
       onClick={() => navigate(`/products/${product.id}`)}
