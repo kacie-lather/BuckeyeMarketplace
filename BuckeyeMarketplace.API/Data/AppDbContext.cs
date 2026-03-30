@@ -13,6 +13,21 @@ namespace BuckeyeMarketplace.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Cart -> CartItem relationship
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.CartItems)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CartItem -> Product relationship
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Seed data
             modelBuilder.Entity<Product>().HasData(
                 new Product { Id = 1, Title = "Hand-Dyed Scarlet Tie-Dye Crewneck", Description = "Hand-dyed OSU scarlet and gray crewneck sweatshirt. Made-to-order, one of a kind. Unisex sizing, runs slightly oversized. Machine wash cold.", Price = 38.00m, Category = "Outfits", SellerName = "AlexDesigns", PostedDate = new DateTime(2025, 3, 1), ImageUrl = "/images/Sweatshirt.png" },
                 new Product { Id = 2, Title = "Upcycled Denim Jacket - Block O Back", Description = "Thrifted denim jacket with hand-painted OSU Block O on the back using fabric paint. Size M. Truly one of a kind.", Price = 55.00m, Category = "Outfits", SellerName = "AlexDesigns", PostedDate = new DateTime(2025, 3, 5), ImageUrl = "/images/Jacket.png" },
