@@ -10,7 +10,7 @@ A student-to-student marketplace for OSU students to buy and sell handmade and u
 
 ## Overview
 
-Buckeye Marketplace connects OSU students through a creative marketplace where student makers like Alex (Graphic Design junior) can sell their handmade and upcycled designs directly to buyers like Emily who want unique, affordable OSU-themed items.
+Buckeye Marketplace connects OSU students through a creative marketplace where student makers like Alex (Graphic Design junior) can sell their handmade and upcycled designs directly to buyers like Emily who want unique, affordable OSU-themed items and Barbara who is searching for gifts for her grandson.
 
 ## How to Run Locally
 
