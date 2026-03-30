@@ -1,1 +1,17 @@
-node_modules
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+appsettings.Development.json
+
+# React / Node
+node_modules/
+dist/
+.env
+.env.local
+
+# Misc
+.DS_Store
+Thumbs.db
