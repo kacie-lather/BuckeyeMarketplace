@@ -15,19 +15,19 @@ Buckeye Marketplace connects OSU students through a creative marketplace where s
 ## How to Run Locally
 
 **Backend (.NET API)**
-```
-cd backend/BuckeyeMarketplace.API
+```bash
+cd BuckeyeMarketplace.API
 dotnet run
 ```
-Runs on http://localhost:5136
+API runs at http://localhost:5136
 
 **Frontend (React)**
-```
+```bash
 cd frontend
 npm install
 npm run dev
 ```
-Runs on http://localhost:5173
+App runs at http://localhost:5173
 
 ## Screenshots
 
