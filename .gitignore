@@ -1,17 +1,15 @@
-# .NET
-bin/
-obj/
+# .NET - backend
+backend/BuckeyeMarketplace.API/bin/
+backend/BuckeyeMarketplace.API/obj/
 *.user
 *.suo
 .vs/
-appsettings.Development.json
 
-# React / Node
-node_modules/
-dist/
+# React/Node - frontend
+frontend/node_modules/
+frontend/dist/
 .env
 .env.local
 
-# Misc
+# Mac
 .DS_Store
-Thumbs.db
