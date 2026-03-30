@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '../config'
+
+interface Product {
+  id: number
+  title: string
+  description: string
+  price: number
+  category: string
+  sellerName: string
+  postedDate: string
+  imageUrl: string
+}
 
 function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [product, setProduct] = useState(null)
+  const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(`http://localhost:5136/api/products/${id}`)
+    fetch(`${API_BASE_URL}/api/products/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Product not found')
         return res.json()
@@ -26,6 +38,7 @@ function ProductDetailPage() {
 
   if (loading) return <p>Loading product...</p>
   if (error) return <p style={{ color: 'red' }}>{error}</p>
+  if (!product) return null
 
   return (
     <div style={{ maxWidth: '700px', margin: '0 auto' }}>
