@@ -1,42 +1,47 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
-import { API_BASE_URL } from '../config'
+import { createContext, useContext, useReducer, ReactNode } from 'react'
 
-export interface CartProduct {
-  id: number
+export interface CartItem {
+  cartItemId: number
+  productId: number
   title: string
   price: number
   imageUrl: string
-}
-
-export interface CartItem {
-  id: number
-  productId: number
   quantity: number
-  product: CartProduct
+  subtotal: number
 }
 
 interface CartState {
   items: CartItem[]
+  total: number
+  itemCount: number
   loading: boolean
   error: string | null
 }
 
 type CartAction =
-  | { type: 'SET_ITEMS'; payload: CartItem[] }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'CLEAR_CART' }
+  | { type: 'SET_CART'; items: CartItem[]; total: number; itemCount: number }
+  | { type: 'SET_LOADING'; loading: boolean }
+  | { type: 'SET_ERROR'; error: string | null }
+  | { type: 'CLEAR_ERROR' }
+
+const initialState: CartState = {
+  items: [],
+  total: 0,
+  itemCount: 0,
+  loading: false,
+  error: null
+}
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
-    case 'SET_ITEMS':
-      return { ...state, items: action.payload, loading: false, error: null }
+    case 'SET_CART':
+      return { ...state, items: action.items, total: action.total, itemCount: action.itemCount, loading: false, error: null }
     case 'SET_LOADING':
-      return { ...state, loading: action.payload }
+      return { ...state, loading: action.loading }
     case 'SET_ERROR':
-      return { ...state, error: action.payload, loading: false }
-    case 'CLEAR_CART':
-      return { ...state, items: [] }
+      return { ...state, error: action.error, loading: false }
+    case 'CLEAR_ERROR':
+      return { ...state, error: null }
     default:
       return state
   }
@@ -44,106 +49,23 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 interface CartContextType {
   state: CartState
-  addToCart: (productId: number, quantity?: number) => Promise<void>
-  updateQuantity: (cartItemId: number, quantity: number) => Promise<void>
-  removeItem: (cartItemId: number) => Promise<void>
-  clearCart: () => Promise<void>
-  refreshCart: () => Promise<void>
-  itemCount: number
-  total: number
+  dispatch: React.Dispatch<CartAction>
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
+const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    loading: false,
-    error: null,
-  })
-
-  const refreshCart = async () => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/cart`)
-      if (!res.ok) throw new Error()
-      const data = await res.json()
-      dispatch({ type: 'SET_ITEMS', payload: data.cartItems ?? [] })
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load cart.' })
-    }
-  }
-
-  useEffect(() => {
-    refreshCart()
-  }, [])
-
-  const addToCart = async (productId: number, quantity = 1) => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/cart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity }),
-      })
-      if (!res.ok) throw new Error()
-      await refreshCart()
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to add item to cart.' })
-    }
-  }
-
-  const updateQuantity = async (cartItemId: number, quantity: number) => {
-    if (quantity < 1) return
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/cart/${cartItemId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity }),
-      })
-      if (!res.ok) throw new Error()
-      await refreshCart()
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to update quantity.' })
-    }
-  }
-
-  const removeItem = async (cartItemId: number) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/cart/${cartItemId}`, {
-        method: 'DELETE',
-      })
-      if (!res.ok) throw new Error()
-      await refreshCart()
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to remove item.' })
-    }
-  }
-
-  const clearCart = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/cart/clear`, {
-        method: 'DELETE',
-      })
-      if (!res.ok) throw new Error()
-      dispatch({ type: 'CLEAR_CART' })
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to clear cart.' })
-    }
-  }
-
-  const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
-  const total = state.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const [state, dispatch] = useReducer(cartReducer, initialState)
 
   return (
-    <CartContext.Provider value={{ state, addToCart, updateQuantity, removeItem, clearCart, refreshCart, itemCount, total }}>
+    <CartContext.Provider value={{ state, dispatch }}>
       {children}
     </CartContext.Provider>
   )
 }
 
 export function useCart() {
-  const ctx = useContext(CartContext)
-  if (!ctx) throw new Error('useCart must be used within CartProvider')
-  return ctx
+  const context = useContext(CartContext)
+  if (!context) throw new Error('useCart must be used within a CartProvider')
+  return context
 }
