@@ -1,4 +1,5 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
+import { fetchCart } from '../services/cartService'
 
 export interface CartItem {
   cartItemId: number
@@ -56,6 +57,19 @@ const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState)
+
+  useEffect(() => {
+    const loadCart = async () => {
+      dispatch({ type: 'SET_LOADING', loading: true })
+      try {
+        const cart = await fetchCart()
+        dispatch({ type: 'SET_CART', items: cart.items, total: cart.total, itemCount: cart.itemCount })
+      } catch {
+        dispatch({ type: 'SET_ERROR', error: 'Failed to load cart.' })
+      }
+    }
+    loadCart()
+  }, [])
 
   return (
     <CartContext.Provider value={{ state, dispatch }}>
