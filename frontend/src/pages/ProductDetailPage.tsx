@@ -2,14 +2,18 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from '../config'
 import { Product } from '../types/Product'
-
+import { useCart } from '../context/CartContext'
+import { addToCart, fetchCart } from '../services/cartService'
 
 function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { dispatch } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [adding, setAdding] = useState(false)
+  const [added, setAdded] = useState(false)
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products/${id}`)
@@ -26,6 +30,22 @@ function ProductDetailPage() {
         setLoading(false)
       })
   }, [id])
+
+  const handleAddToCart = async () => {
+    if (!product) return
+    setAdding(true)
+    try {
+      await addToCart(product.id)
+      const cart = await fetchCart()
+      dispatch({ type: 'SET_CART', items: cart.items, total: cart.total, itemCount: cart.itemCount })
+      setAdded(true)
+      setTimeout(() => setAdded(false), 2000)
+    } catch {
+      alert('Could not add to cart. Please try again.')
+    } finally {
+      setAdding(false)
+    }
+  }
 
   if (loading) return <p>Loading product...</p>
   if (error) return <p style={{ color: 'red' }}>{error}</p>
@@ -52,6 +72,25 @@ function ProductDetailPage() {
       <p><strong>Seller:</strong> {product.sellerName}</p>
       <p><strong>Posted:</strong> {new Date(product.postedDate).toLocaleDateString()}</p>
       <p><strong>Description:</strong> {product.description}</p>
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={adding}
+        style={{
+          marginTop: '16px',
+          width: '100%',
+          padding: '12px',
+          backgroundColor: added ? '#2d6a2d' : '#BB0000',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: adding ? 'not-allowed' : 'pointer',
+          fontWeight: 'bold',
+          fontSize: '1rem'
+        }}
+      >
+        {adding ? 'Adding...' : added ? '✓ Added to Cart!' : 'Add to Cart'}
+      </button>
     </div>
   )
 }
