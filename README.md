@@ -32,10 +32,10 @@ App runs at http://localhost:5173
 ## Screenshots
 
 **Product List Page**
-![Product List](frontend/public/images/product-list.png)
+![Product List](docs/product-list.png)
 
 **Product Detail Page**
-![Product Detail](frontend/public/images/product-detail.png)
+![Product Detail](docs/product-detail.png)
 
 ## AI Usage Summary
 
