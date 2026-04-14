@@ -87,7 +87,7 @@ function CartPage() {
       <div style={{ textAlign: 'right', marginTop: '16px' }}>
         <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Total: ${state.total.toFixed(2)}</p>
         <button type="button" onClick={handleClear} style={{ marginRight: '8px', padding: '8px 16px', cursor: 'pointer' }}>Clear Cart</button>
-        <button type="button" style={{ backgroundColor: '#BB0000', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+        <button type="button" onClick={() => navigate('/checkout')} style={{ backgroundColor: '#BB0000', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
           Checkout
         </button>
       </div>

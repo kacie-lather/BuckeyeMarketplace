@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
 import { fetchCart } from '../services/cartService'
+import { useAuth } from './AuthContext'
 
 export interface CartItem {
   cartItemId: number
@@ -57,8 +58,10 @@ const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState)
+  const { token } = useAuth()
 
   useEffect(() => {
+    if (!token) return
     const loadCart = async () => {
       dispatch({ type: 'SET_LOADING', loading: true })
       try {
@@ -69,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     }
     loadCart()
-  }, [])
+  }, [token])
 
   return (
     <CartContext.Provider value={{ state, dispatch }}>
