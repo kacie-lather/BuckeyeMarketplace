@@ -99,10 +99,68 @@ namespace BuckeyeMarketplace.API.Controllers
 
             return Ok(orders);
         }
+
+        // GET /api/admin/orders (Admin only)
+        [HttpGet("admin/orders")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => new
+                {
+                    id = o.Id,
+                    userId = o.UserId,
+                    orderDate = o.OrderDate,
+                    status = o.Status,
+                    total = o.Total,
+                    shippingAddress = o.ShippingAddress,
+                    confirmationNumber = o.ConfirmationNumber,
+                    items = o.OrderItems.Select(oi => new
+                    {
+                        productId = oi.ProductId,
+                        title = oi.Product.Title,
+                        price = oi.Price,
+                        quantity = oi.Quantity,
+                        subtotal = oi.Price * oi.Quantity
+                    })
+                })
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
+        // PUT /api/orders/{orderId}/status (Admin only)
+        [HttpPut("{orderId}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusRequest request)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order == null)
+                return NotFound(new { message = "Order not found" });
+
+            order.Status = request.Status;
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                id = order.Id,
+                status = order.Status,
+                confirmationNumber = order.ConfirmationNumber
+            });
+        }
     }
 
     public class CreateOrderRequest
     {
         public string ShippingAddress { get; set; } = string.Empty;
+    }
+
+    public class UpdateOrderStatusRequest
+    {
+        public string Status { get; set; } = string.Empty;
     }
 }
