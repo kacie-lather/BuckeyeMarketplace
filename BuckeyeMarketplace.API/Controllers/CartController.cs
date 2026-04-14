@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using BuckeyeMarketplace.API.Data;
 using BuckeyeMarketplace.API.Models;
+using System.Security.Claims;
 
 namespace BuckeyeMarketplace.API.Controllers
 {
     [ApiController]
     [Route("api/cart")]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private const string CurrentUserId = "hardcoded-user-1";
 
         public CartController(AppDbContext context)
         {
@@ -24,7 +26,7 @@ namespace BuckeyeMarketplace.API.Controllers
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(c => c.UserId == CurrentUserId);
+                .FirstOrDefaultAsync(c => c.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (cart == null) return NotFound(new { message = "Cart is empty" });
 
@@ -62,11 +64,11 @@ namespace BuckeyeMarketplace.API.Controllers
             // Find or create cart
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserId == CurrentUserId);
+                .FirstOrDefaultAsync(c => c.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (cart == null)
             {
-                cart = new Cart { UserId = CurrentUserId };
+                cart = new Cart { UserId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
             }
@@ -103,7 +105,7 @@ namespace BuckeyeMarketplace.API.Controllers
 
             var item = await _context.CartItems
                 .Include(ci => ci.Cart)
-                .FirstOrDefaultAsync(ci => ci.Id == cartItemId && ci.Cart.UserId == CurrentUserId);
+                .FirstOrDefaultAsync(ci => ci.Id == cartItemId && ci.Cart.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (item == null) return NotFound(new { message = "Cart item not found" });
 
@@ -120,7 +122,7 @@ namespace BuckeyeMarketplace.API.Controllers
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserId == CurrentUserId);
+                .FirstOrDefaultAsync(c => c.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (cart == null) return NotFound(new { message = "Cart not found" });
 
@@ -137,7 +139,7 @@ namespace BuckeyeMarketplace.API.Controllers
         {
             var item = await _context.CartItems
                 .Include(ci => ci.Cart)
-                .FirstOrDefaultAsync(ci => ci.Id == cartItemId && ci.Cart.UserId == CurrentUserId);
+                .FirstOrDefaultAsync(ci => ci.Id == cartItemId && ci.Cart.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (item == null) return NotFound(new { message = "Cart item not found" });
 

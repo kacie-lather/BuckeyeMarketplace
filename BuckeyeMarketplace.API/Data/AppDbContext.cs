@@ -10,6 +10,8 @@ namespace BuckeyeMarketplace.API.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +27,20 @@ namespace BuckeyeMarketplace.API.Data
                 .HasOne(ci => ci.Product)
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Order -> OrderItem relationship
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OrderItem -> Product relationship
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Seed data
