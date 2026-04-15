@@ -56,7 +56,7 @@ public class AuthController : ControllerBase
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
             return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
