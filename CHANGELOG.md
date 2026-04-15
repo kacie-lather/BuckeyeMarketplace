@@ -15,3 +15,14 @@ Added the `[EmailAddress]` data annotation to `RegisterModel.Email`. Without thi
 
 **Set JWT configuration in user secrets**
 Moved `Jwt:Key`, `Jwt:Issuer`, and `Jwt:Audience` out of `appsettings.json` (where they were absent but expected at runtime) and into `dotnet user-secrets`. This ensures the signing key is never committed to source control.
+
+**Fix cart service to use authenticated axios instance (`cartService.ts`)**
+Replaced all raw `fetch()` calls in `cartService.ts` with the configured 
+axios instance from `api.ts`. The raw fetch calls bypassed the axios 
+interceptor that attaches the Bearer token, causing all cart endpoints 
+to return 401 Unauthorized even when the user was logged in.
+
+**Fix AppDbContext to extend IdentityDbContext (`AppDbContext.cs`)**
+Changed `AppDbContext` to extend `IdentityDbContext<IdentityUser>` instead 
+of plain `DbContext`. Without this, ASP.NET Identity had no knowledge of 
+the Identity tables, causing user registration to fail with a 500 error.
