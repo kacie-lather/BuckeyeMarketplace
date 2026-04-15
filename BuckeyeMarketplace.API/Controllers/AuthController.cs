@@ -67,6 +67,7 @@ public class AuthController : ControllerBase
 
 public class RegisterModel
 {
+    [System.ComponentModel.DataAnnotations.EmailAddress]
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }
