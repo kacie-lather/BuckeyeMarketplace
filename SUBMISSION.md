@@ -10,7 +10,20 @@
 - **Email:** e2etest@buckeye.com
 - **Password:** Buckeye1!
 
-> To create the regular user on a fresh clone, run `npx playwright test` from the `frontend/` directory. The spec registers the account automatically. Alternatively, register a new account via the UI at `/register`.
+> To create the regular user on a fresh clone, run the Playwright E2E spec (see below). The spec registers the account automatically. Alternatively, register a new account via the UI at `/register`.
+
+---
+
+## Running the E2E Tests
+
+The Playwright spec is at `e2e/checkout.spec.ts` (repo root). The Playwright binary and config live in `frontend/`:
+
+```bash
+cd frontend
+npx playwright test
+```
+
+This uses `frontend/playwright.config.ts`, which sets `testDir: '../e2e'` to pick up the spec from the repo root.
 
 ---
 
