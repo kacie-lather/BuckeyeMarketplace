@@ -18,3 +18,4 @@ frontend/dist/
 *.db
 **/bin/
 **/obj/
+node_modules/
