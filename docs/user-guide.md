@@ -24,7 +24,7 @@ required to add items to your cart and place an order.
 
 When you open the app, you land directly on the **Browse Listings** page.
 
-![Browse Listings page showing OSU-themed products in a grid with images, prices, and categories](home.png)
+![Browse Listings page showing OSU-themed products in a grid with images, prices, and categories](Product-list-Grid.png)
 
 Each product card shows:
 - Product image
@@ -46,7 +46,7 @@ description, price, seller, and post date alongside the Add to Cart button.
 
 1. Click **Register** in the top-right navigation bar.
 
-   ![Register form with Email, Password, and Confirm Password fields](register.png)
+   ![Register form with Email, Password, and Confirm Password fields](Registration-Page.png)
 
 2. Enter your **email address** and choose a **password**.
 
@@ -71,7 +71,7 @@ button, and a **Logout** button.
 
 1. Click **Login** in the top-right navigation bar.
 
-   ![Login form with Email and Password fields and a Login button](login.png)
+   ![Login form with Email and Password fields and a Login button](Login-Page.png)
 
 2. Enter your registered **email** and **password**.
 3. Click the red **Login** button.
@@ -97,7 +97,7 @@ You must be logged in to add items to your cart.
 
 Click the **Cart** button in the navigation bar.
 
-![Cart page showing two items with quantity controls, prices, and a total](cart.png)
+![Cart page showing two items with quantity controls, prices, and a total](Shopping-Cart.png)
 
 The cart page shows:
 - Each item's image, name, and unit price
@@ -113,7 +113,7 @@ The cart page shows:
 
 From the Cart page, click the red **Checkout** button.
 
-![Checkout page showing an order summary and a shipping address text field](checkout.png)
+![Checkout page showing an order summary and a shipping address text field](Checkout-Form.png)
 
 The Checkout page shows:
 - An **Order Summary** listing each item and its price, with the total
@@ -125,7 +125,7 @@ Click **Place Order** to submit. If you need to make changes, click
 
 **After placing your order:**
 
-![Order confirmation screen showing a checkmark, confirmation number, order ID, total, and status](confirmation.png)
+![Order confirmation screen showing a checkmark, confirmation number, order ID, total, and status](Order-Confirmation.png)
 
 The confirmation screen shows:
 - A confirmation checkmark
@@ -142,7 +142,7 @@ Click **View Order History** to see all your past orders, or
 
 Click **Orders** in the navigation bar (only visible when logged in).
 
-![Order History page showing two past orders with confirmation numbers, dates, statuses, and totals](order-history.png)
+![Order History page showing two past orders with confirmation numbers, dates, statuses, and totals](Order-History.png)
 
 The Order History page lists all your past orders, showing:
 - **Confirmation number** (e.g. `ORD-20260428-C55C78A2`)
