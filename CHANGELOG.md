@@ -1,5 +1,55 @@
 # Changelog
 
+## Milestone 6 — Production Deployment & CI/CD
+
+### Bug Fixes
+
+**Fix SQLite migration incompatibility with Azure SQL (`Program.cs`)**
+Replaced `db.Database.Migrate()` with `db.Database.EnsureCreated()` in the
+startup block. The existing EF Core migrations were generated against the SQLite
+provider (columns typed as `TEXT`) and could not be applied to Azure SQL Server,
+causing the app to crash on startup with exit code 134 (SIGABRT). `EnsureCreated()`
+creates the schema directly from the EF Core model annotations in a
+provider-agnostic way, bypassing the migration system entirely.
+
+**Fix CORS policy to allow production frontend URL (`Program.cs`)**
+Added `https://yellow-smoke-03bf58010.7.azurestaticapps.net` to `WithOrigins()`
+in the CORS policy. Without this, all API requests from the deployed frontend
+were blocked by the browser with a CORS error, making the live site non-functional.
+
+**Fix cart identity context not initialized on page load (`CartContext.tsx`)**
+Cart requests were firing before the authenticated user context was fully
+initialized, causing the cart to return empty or 401 on first load even when
+the user was logged in. Fixed by adding the auth token as a dependency to the
+CartContext `useEffect` so cart data is only fetched after authentication state
+is confirmed.
+
+**Fix database configuration to use Azure SQL in production (`Program.cs`, `appsettings.json`)**
+Added conditional database provider registration: the app uses SQL Server when
+`ConnectionStrings:DefaultConnection` is set (Azure production) and falls back
+to SQLite when it is empty (local development). Previously the app always used
+SQLite regardless of environment.
+
+**Fix frontend hardcoded localhost URLs not replaced for production (`AuthContext.tsx`, `api.ts`, `config.ts`)**
+`AuthContext.tsx` had two hardcoded `http://localhost:5136` URLs for login and
+register that were not reading from `config.ts`. All API base URLs are now
+read from the `VITE_API_URL` environment variable set in `.env.production`,
+with the production Azure URL as the fallback.
+
+**Fix TypeScript error on `import.meta.env` (`tsconfig.json`)**
+`tsconfig.json` declared `"types": ["node"]` only, which caused the TypeScript
+compiler to report `Property 'env' does not exist on type 'ImportMeta'` when
+reading Vite environment variables. Fixed by adding `"vite/client"` to the
+types array, which provides the Vite-specific `ImportMeta` augmentation.
+
+**Remove `appsettings.Development.json` from git tracking (`.gitignore`)**
+The file containing local JWT secrets was previously committed to the repository.
+Removed from tracking with `git rm --cached` and added to `.gitignore` to
+prevent re-committing. Deploy artifacts (`deploy.zip`, `publish/`) also added
+to `.gitignore`.
+
+---
+
 ## Milestone 5 — Authentication, Security & Order Processing
 
 ### Bug Fixes
