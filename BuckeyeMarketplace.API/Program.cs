@@ -12,8 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=buckeyemarketplace.db"));
+{
+    if (!string.IsNullOrEmpty(connectionString))
+        options.UseSqlServer(connectionString);
+    else
+        options.UseSqlite("Data Source=buckeyemarketplace.db");
+});
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
